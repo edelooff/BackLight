@@ -18,6 +18,6 @@ Light::Light(uint8_t value) {
     partial = full_lightness & 3;
 }
 
-uint8_t Light::outValue(uint8_t index) {
+uint8_t Light::outValue(uint8_t index) const {
     return 0x80 | (base + (partial > index));
 }

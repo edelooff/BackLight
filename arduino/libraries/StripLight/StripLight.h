@@ -10,6 +10,6 @@ public:
   uint8_t base, partial;
   Light();
   Light(uint8_t value);
-  uint8_t outValue(uint8_t index);
+  uint8_t outValue(uint8_t index) const;
 };
 
