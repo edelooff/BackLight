@@ -38,8 +38,6 @@ public:
 };
 
 const uint8_t lpd8806_latch = 0x00;
-const uint8_t lpd8806_continuation = 0x80;
-const uint16_t fadeDelay = 2500;
 const Light lightnessLUT[256];
 const uint8_t outputCount = 9;
 const uint8_t stripBufferSize = outputCount * 4 * 3;
