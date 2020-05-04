@@ -87,26 +87,30 @@ void loop() {
     uint8_t hue = 0;
     uint8_t hueOffset = 16;
     uint8_t outputIndex = 0;
+    auto now = millis();
     auto activeOutput = outputSelection[outputIndex];
     auto stepDelay = initialStepDelay;
-    auto nextFrequency = millis() + frequencyChangeInterval;
-    auto nextHue = millis() + hueChangeInterval;
+    auto nextFrequency = now + frequencyChangeInterval;
+    auto nextHue = now + hueChangeInterval;
+    auto nextOutputStep = now + stepDelay;
     while (true) {
-        for (uint8_t output = 0; output < outputCount; ++output) {
+        if (now >= nextHue) {
+            nextHue = now + hueChangeInterval;
+            hue += 1;
+            if (now >= nextFrequency) {
+                nextFrequency = now + frequencyChangeInterval;
+                stepDelay = (!stepDelay) ? initialStepDelay : stepDelay >> 1;
+            }
+        }
+        if (now >= nextOutputStep) {
+            nextOutputStep = now + stepDelay;
+            activeOutput = outputSelection[++outputIndex % 4];
+        }
+        for (auto output = outputCount; output--;) {
             setOutputHue(output, activeOutput, hue + hueOffset * output);
         }
         transferBuffer();
         memset(stripBuffer, 0x80, stripBufferSize);
-        outputIndex = (outputIndex + 1) % 4;
-        activeOutput = outputSelection[outputIndex];
-        if (millis() > nextHue) {
-            nextHue = millis() + hueChangeInterval;
-            hue += 1;
-            if (millis() > nextFrequency) {
-                nextFrequency = millis() + frequencyChangeInterval;
-                stepDelay = (!stepDelay) ? initialStepDelay : stepDelay >> 1;
-            }
-        }
-        delay(stepDelay);
+        now = millis();
     }
 }
